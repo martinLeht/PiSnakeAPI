@@ -21,8 +21,10 @@
     "typescript": "^3.3.3"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.16.4",
+    "helmet": "^4.2.0",
     "mongoose": "^5.10.14",
     "mongoose-sequence": "^5.3.0"
   }

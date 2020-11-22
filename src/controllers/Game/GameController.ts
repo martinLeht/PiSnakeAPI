@@ -72,21 +72,32 @@ export class GameController implements CrudController {
             let gameData: any = {
                 score: req.body.score
             };
+            if (!gameData) reject({ error: 'Provide data to update' });
             
             gameData = this.clean(gameData);
             console.log("Data to be updated: " + gameData);
 
-            try {
-                await Game.findOneAndUpdate({ gameId: id }, gameData);
-                console.log('Successfully updated a game entry with id: ' + id);
-                resolve({
-                    success: 'Successfully updated a game entry with id: ' + id
-                });
-            } catch(err) {
+            let game: any = await Game.findOne({ gameId: id});
+            if (game != null) {
+                try {
+                    await Game.updateOne({ gameId: id }, gameData);
+                    console.log('Successfully updated a game entry with id: ' + id);
+                    resolve({
+                        success: 'Successfully updated a game entry with id: ' + id
+                    });
+                } catch(err) {
+                    reject({
+                        error: err
+                    });
+                }
+            } else {
+                console.log("ERRORR in update")
                 reject({
-                    error: err
+                    error: "No entry found with id:" + id
                 });
             }
+
+            
         });
     }
 
@@ -94,17 +105,24 @@ export class GameController implements CrudController {
     public async delete(req: Request, res: Response): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             const id: number = parseInt(req.params.id);
-            if (!id) reject({ error: 'Procide a id' });
-
-            try {
-                await Game.findOneAndDelete({ gameId: id });
-                console.log('Successfully deleted a game entry with id: ' + id);
-                resolve({
-                    success: 'Successfully deleted a game entry with id: ' + id
-                });
-            } catch(err) {
+            if (!id) reject({ error: 'Provide a id' });
+            let game: any = await Game.findOne({ gameId: id});
+            if (game != null) {
+                try {
+                    await Game.deleteOne({ gameId: id });
+                    console.log('Successfully deleted a game entry with id: ' + id);
+                    resolve({
+                        success: 'Successfully deleted a game entry with id: ' + id
+                    });
+                } catch(err) {
+                    reject({
+                        error: err
+                    });
+                }
+            } else {
+                console.log("ERRORR in update")
                 reject({
-                    error: err
+                    error: "No entry found with id:" + id
                 });
             }
         });

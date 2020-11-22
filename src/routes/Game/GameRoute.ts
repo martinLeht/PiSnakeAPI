@@ -13,50 +13,76 @@ export const router = express.Router({
 
 // @route POST /game/
 // @desc Route to create a game entry
-router.post('/', async (req: Request, res: Response) => {
-    const result: any = await gameController.create(req, res);
-    if (result['error']) throw Error(result['error']);
-    else {
-        res.json(result);
-    }
+router.post('/', (req: Request, res: Response) => {
+    gameController.create(req, res)
+    .then(result => {
+        if (result['error']) throw Error(result['error']);
+        else {
+            res.json(result);
+        }
+    })
+    .catch(err => {
+        res.json(err);
+    });
 });
 
 // @route GET /game/
 // @desc Route to get all games
-router.get('/', async (req: Request, res: Response) => {
-    const result:any = await gameController.read(req, res);
-    if (result['error']) throw Error(result['error']);
-    else {
-        res.json(result);
-    }
+router.get('/', (req: Request, res: Response) => {
+    gameController.read(req, res)
+    .then(result => {
+        if (result['error']) throw Error(result['error']);
+        else {
+            res.json(result);
+        }
+    })
+    .catch(err => {
+        res.json(err);
+    });
 });
 
 // @route GET /game/:id
 // @desc Route to get one game by Id
-router.get('/:id', async (req: Request, res: Response) => {
-    const result: any = await gameController.findById(req, res);
-    if (result['error']) throw Error(result['error']);
-    else {
-        res.json(result);
-    }
+router.get('/:id', (req: Request, res: Response) => {
+    gameController.findById(req, res)
+    .then(result => {
+        if (result['error']) throw Error(result['error']);
+        else {
+            res.json(result);
+        }
+    })
+    .catch(err => {
+        res.json(err);
+    });
 });
 
 // @route PATCH /game/:id
 // @desc Route to update a game by Id
-router.patch('/:id', async (req: Request, res: Response) => {
-    const result: any = await gameController.update(req, res);
-    if (result['error']) throw Error(result['error']);
-    else {
-        res.json(result);
-    }
+router.patch('/:id', (req: Request, res: Response) => {
+    gameController.update(req, res)
+    .then(result => {
+        if (result['error']) throw Error(result['error']);
+        else {
+            res.json(result);
+        }
+    })
+    .catch(err => {
+        res.json(err);
+    });
+    
 });
 
 // @route DELETE /game/:id
 // @desc Route to delete a game entry by id
-router.delete('/:id', async (req: Request, res: Response) => {
-    const result: any = await gameController.delete(req, res);
-    if (result['error']) throw Error(result['error']);
-    else {
-        res.json(result);
-    }
+router.delete('/:id', (req: Request, res: Response) => {
+    gameController.delete(req, res)
+    .then(result => {
+        if (result['error']) throw Error(result['error']);
+        else {
+            res.json(result);
+        }
+    })
+    .catch(err => {
+        res.json(err);
+    });
 });
