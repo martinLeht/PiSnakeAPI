@@ -6,26 +6,32 @@ import { IGame } from '../../models/interfaces/IGame';
 
 export class GameController implements CrudController {
 
-    // Creates a game entry with provided scores.
+    // Creates a game entry with provided score.
     public async create(req: Request, res: Response): Promise<any> {
         
         return new Promise<any>(async (resolve, reject) => {
             const score: number = req.body.score;
 
-            const game: IGame = new Game({
-                score: score
-            });
-
-            console.log("Game Scores: " + req.body.score);
-            
-            try {
-                const savedResult = await game.save();
-                const parsedResult = this.parse(savedResult);
-                resolve(parsedResult);
-            } catch(err) {
+            if (!score || typeof(score) !== 'number') {
                 reject({
-                    error: err
+                    error: "Provide a valid score to save. Has to be a number."
                 });
+            } else {
+                const game: IGame = new Game({
+                    score: score
+                });
+
+                console.log("Game Scores: " + req.body.score);
+                
+                try {
+                    const savedResult = await game.save();
+                    const parsedResult = this.parse(savedResult);
+                    resolve(parsedResult);
+                } catch(err) {
+                    reject({
+                        error: err
+                    });
+                }
             }
         });
         
@@ -50,16 +56,24 @@ export class GameController implements CrudController {
     public async findById(req: Request, res: Response): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             const id: number = parseInt(req.params.id);
-            if (!id) reject({ error: 'No id provided' });
-            try {
-                const result: any = await Game.findOne({ gameId: id });
-                const parsedResult: any = this.parse(result);
-                resolve(parsedResult);
-            } catch (err) {
-                reject({
-                    error: err
-                });
+            if (!id) {
+                reject({ error: 'No id provided' });
+            } else {
+                try {
+                    const result: any = await Game.findOne({ gameId: id });
+                    if (!result) {
+                        reject( {error: 'No entry found with id - ' + id });
+                    } else {
+                        const parsedResult: any = this.parse(result);
+                        resolve(parsedResult);
+                    }
+                } catch (err) {
+                    reject({
+                        error: err
+                    });
+                }
             }
+            
         });
     }
 
@@ -67,37 +81,34 @@ export class GameController implements CrudController {
     public async update(req: Request, res: Response): Promise<any> {
         return new Promise<any>(async (resolve, reject)=> {
             const id: number = parseInt(req.params.id);
-            if (!id) reject({ error: 'Provide a id' });
+            if (!id) {
+                reject({ error: 'Provide a id' });
+            } else {
+                let gameData: any = {
+                    score: req.body.score
+                };
+                
+                gameData = this.clean(gameData);
+                console.log("Data to be updated: " + gameData);
 
-            let gameData: any = {
-                score: req.body.score
-            };
-            if (!gameData) reject({ error: 'Provide data to update' });
-            
-            gameData = this.clean(gameData);
-            console.log("Data to be updated: " + gameData);
-
-            let game: any = await Game.findOne({ gameId: id});
-            if (game != null) {
                 try {
-                    await Game.updateOne({ gameId: id }, gameData);
-                    console.log('Successfully updated a game entry with id: ' + id);
-                    resolve({
-                        success: 'Successfully updated a game entry with id: ' + id
-                    });
+                    const result: any = await Game.findOneAndUpdate({ gameId: id }, gameData);
+                    if (result == null) {
+                        reject({
+                            error: 'No entry found with id - ' + id
+                        });
+                    } else {
+                        console.log('Successfully updated a game entry with id: ' + id);
+                        resolve({
+                            success: 'Successfully updated a game entry with id: ' + id
+                        });
+                    }
                 } catch(err) {
                     reject({
                         error: err
                     });
                 }
-            } else {
-                console.log("ERRORR in update")
-                reject({
-                    error: "No entry found with id:" + id
-                });
             }
-
-            
         });
     }
 
@@ -105,30 +116,32 @@ export class GameController implements CrudController {
     public async delete(req: Request, res: Response): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             const id: number = parseInt(req.params.id);
-            if (!id) reject({ error: 'Provide a id' });
-            let game: any = await Game.findOne({ gameId: id});
-            if (game != null) {
+            if (!id) {
+                reject({ error: 'Provide a id' });
+            } else {
                 try {
-                    await Game.deleteOne({ gameId: id });
-                    console.log('Successfully deleted a game entry with id: ' + id);
-                    resolve({
-                        success: 'Successfully deleted a game entry with id: ' + id
-                    });
+                    const result: any = await Game.findOneAndDelete({ gameId: id });
+                    if (result == null) {
+                        reject({
+                            error: 'No entry found with id - ' + id
+                        });
+                    } else {
+                        console.log('Successfully deleted a game entry with id: ' + id);
+                        resolve({
+                            success: 'Successfully deleted a game entry with id: ' + id
+                        });
+                    }
+                    
                 } catch(err) {
                     reject({
                         error: err
                     });
                 }
-            } else {
-                console.log("ERRORR in update")
-                reject({
-                    error: "No entry found with id:" + id
-                });
             }
         });
     }
 
-    // Parses the entry with right names
+    // Parses the entry by excluding sensitive data
     private parse(entry: any) {
         return {
             gameId: entry["gameId"],

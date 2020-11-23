@@ -4,7 +4,7 @@ import cors from 'cors';
 import http, { Server } from 'http';
 import mongoose, { Connection } from 'mongoose';
 
-import { gameRouter } from './routes';
+import { gameRouter } from './routes/routes';
 import { PORT, MONGO_URI } from './config/config';
 
 
