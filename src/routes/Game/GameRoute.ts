@@ -2,11 +2,9 @@ import express, { Request, Response } from 'express';
 import { gameController } from '../../controllers/Controllers';
 
 /*
-    Here is API that routes to the corresponding controller
+    Snake Game API Endpoint that routes to the corresponding controller
     to perform CRUD (Create, Read, Update, Delete) functionalities
 */
-
-
 export const router = express.Router({
     strict: true
 });
