@@ -1,7 +1,7 @@
 {
   "name": "snake_game_scores",
   "version": "1.0.0",
-  "description": "Simple REST api for a raspberry pi based games",
+  "description": "Simple REST api for a raspberry pi based games.",
   "engines": {
     "node": "14.15.1"
   },
