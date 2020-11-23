@@ -2,9 +2,15 @@
   "name": "snake_game_scores",
   "version": "1.0.0",
   "description": "Simple REST api for a raspberry pi based games",
+  "engines": { "node": "14.15.1" },
   "main": "dist/server.js",
   "scripts": {
-    "start": "tsc && node dist/server.js"
+    "start-dev": "tsc && node dist/server.js",
+    "start": "node dist/index.js",
+    "postinstall": "tsc",
+    "watch-node": "nodemon dist/index.js",
+    "watch-ts": "tsc -w",
+    "deploy-heroku": "git add . && git commit -m Heroku && git push heroku master"
   },
   "author": "Martin Lehtomaa",
   "license": "ISC",
